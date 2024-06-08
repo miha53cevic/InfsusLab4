@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../global.css" />
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css" />
+    <script href="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <title>OAP - Camunda</title>
+</head>
+
+<body>
+    <header th:fragment="header">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3">
+            <a class="navbar-brand font-monospace fw-bold" href="/">Online Auction Platform</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/coordinator/">Dashboard</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="container mt-5">
+            <div>
+                <h2>Coordinator tasks</h2>
+                <table id="task-table" class="table table-striped mb-4 table-bordered">
+                    <thead>
+                        <tr>
+                            <th scope="col">Task ID</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Created</th>
+                            <th scope="col">Assignee</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div class="mt-5">
+                <h2>My tasks</h2>
+                <table id="my-task-table" class="table table-striped mb-4 table-bordered">
+                    <thead>
+                        <tr>
+                            <th scope="col">Task ID</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Created</th>
+                            <th scope="col">Assignee</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <footer th:fragment="footer">
+        <div class="bg-dark text-light py-3 mt-5">
+            <div class="container text-center">
+                <p class="mb-0">&copy; 2024 OnlineAuctionPlatform. All Rights Reserved.</p>
+                <p class="mb-0">Created by Mihael Petričević and Tin Margetić</p>
+            </div>
+        </div>
+    </footer>
+    <script src="../lib/camunda-sdk.js"></script>
+    <script type="module" src="index.js"></script>
+</body>
+
+</html>

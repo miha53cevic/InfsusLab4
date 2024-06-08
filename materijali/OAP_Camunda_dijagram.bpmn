@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1x7281j" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.23.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.21.0">
+  <bpmn:collaboration id="Collaboration_0bl058w">
+    <bpmn:participant id="Participant_0zse401" name="Refund Request Process" processRef="RefundReview" />
+  </bpmn:collaboration>
+  <bpmn:process id="RefundReview" isExecutable="true" camunda:historyTimeToLive="30">
+    <bpmn:laneSet id="LaneSet_1r8dg72">
+      <bpmn:lane id="Lane_18l944d" name="User">
+        <bpmn:flowNodeRef>StartEvent_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_0z0efg0</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_1uibkj1</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_004f1si" name="Admin">
+        <bpmn:flowNodeRef>Task_CreateRefundRequest</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_0s8vltt</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_1674uuu</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_1x24asp</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_1ldo3n3</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_1smg0j9</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_0ql36tz</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_1siqwbl" name="Coordinator">
+        <bpmn:flowNodeRef>Activity_0ankag6</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="RefundID" label="Refund Id" type="long" />
+          <camunda:formField id="User" label="User" type="string" />
+          <camunda:formField id="AuctionID" label="Auction Id" type="long" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_0frc6lv</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:manualTask id="Activity_0z0efg0" name="Notify admins">
+      <bpmn:incoming>Flow_0frc6lv</bpmn:incoming>
+      <bpmn:outgoing>Flow_18czzhl</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:userTask id="Task_CreateRefundRequest" name="Create refund request" camunda:candidateGroups="Admins">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="RefundApproved" label="Refund Approved" type="boolean" />
+          <camunda:formField id="Comment" label="Comment" type="string" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_18czzhl</bpmn:incoming>
+      <bpmn:outgoing>Flow_1bjdr8x</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="Gateway_0s8vltt" name="Refund approved?">
+      <bpmn:incoming>Flow_1bjdr8x</bpmn:incoming>
+      <bpmn:outgoing>Flow_0v1r8fe</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0se1guv</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0frc6lv" sourceRef="StartEvent_1" targetRef="Activity_0z0efg0" />
+    <bpmn:sequenceFlow id="Flow_18czzhl" sourceRef="Activity_0z0efg0" targetRef="Task_CreateRefundRequest" />
+    <bpmn:sequenceFlow id="Flow_0ck3oht" sourceRef="Activity_1uibkj1" targetRef="Activity_1674uuu" />
+    <bpmn:sequenceFlow id="Flow_1bjdr8x" sourceRef="Task_CreateRefundRequest" targetRef="Gateway_0s8vltt" />
+    <bpmn:sequenceFlow id="Flow_0v1r8fe" name="No" sourceRef="Gateway_0s8vltt" targetRef="Activity_1674uuu">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!RefundApproved}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1kx5wal" sourceRef="Activity_1674uuu" targetRef="Gateway_1x24asp" />
+    <bpmn:sequenceFlow id="Flow_03xr9il" sourceRef="Gateway_1x24asp" targetRef="Activity_1ldo3n3" />
+    <bpmn:sequenceFlow id="Flow_1yniwi9" sourceRef="Gateway_1x24asp" targetRef="Activity_0ankag6" />
+    <bpmn:sequenceFlow id="Flow_1u9mxcd" sourceRef="Activity_0ankag6" targetRef="Gateway_1smg0j9" />
+    <bpmn:sequenceFlow id="Flow_1kl641e" sourceRef="Gateway_1smg0j9" targetRef="Event_0ql36tz" />
+    <bpmn:sequenceFlow id="Flow_0oxgo2r" sourceRef="Activity_1ldo3n3" targetRef="Gateway_1smg0j9" />
+    <bpmn:sequenceFlow id="Flow_0se1guv" name="Yes" sourceRef="Gateway_0s8vltt" targetRef="Activity_1uibkj1">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${RefundApproved}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:userTask id="Activity_1674uuu" name="Close refund request" camunda:candidateGroups="Admins">
+      <bpmn:extensionElements />
+      <bpmn:incoming>Flow_0v1r8fe</bpmn:incoming>
+      <bpmn:incoming>Flow_0ck3oht</bpmn:incoming>
+      <bpmn:outgoing>Flow_1kx5wal</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Activity_1uibkj1" name="Choose refund method" camunda:assignee="${User}">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="RefundMethod" label="Refund Method" type="enum">
+            <camunda:value id="Card" name="Card" />
+            <camunda:value id="Wallet" name="Wallet" />
+          </camunda:formField>
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0se1guv</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ck3oht</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:parallelGateway id="Gateway_1x24asp">
+      <bpmn:incoming>Flow_1kx5wal</bpmn:incoming>
+      <bpmn:outgoing>Flow_03xr9il</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1yniwi9</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:userTask id="Activity_0ankag6" name="Move to closed refund requests" camunda:candidateGroups="Coordinators">
+      <bpmn:extensionElements />
+      <bpmn:incoming>Flow_1yniwi9</bpmn:incoming>
+      <bpmn:outgoing>Flow_1u9mxcd</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:manualTask id="Activity_1ldo3n3" name="Notify user">
+      <bpmn:incoming>Flow_03xr9il</bpmn:incoming>
+      <bpmn:outgoing>Flow_0oxgo2r</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:parallelGateway id="Gateway_1smg0j9">
+      <bpmn:incoming>Flow_0oxgo2r</bpmn:incoming>
+      <bpmn:incoming>Flow_1u9mxcd</bpmn:incoming>
+      <bpmn:outgoing>Flow_1kl641e</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:endEvent id="Event_0ql36tz">
+      <bpmn:incoming>Flow_1kl641e</bpmn:incoming>
+    </bpmn:endEvent>
+  </bpmn:process>
+  <bpmn:message id="Message_3om0qih" name="RefundApplication" />
+  <bpmn:message id="Message_0i61j9b" name="RefundResult" />
+  <bpmn:message id="Message_3sifes7" name="RefundRequest" />
+  <bpmn:message id="Message_01mf8ah" name="RefundMethod" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0bl058w">
+      <bpmndi:BPMNShape id="Participant_0zse401_di" bpmnElement="Participant_0zse401" isHorizontal="true">
+        <dc:Bounds x="151" y="79" width="1348" height="651" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_18l944d_di" bpmnElement="Lane_18l944d" isHorizontal="true">
+        <dc:Bounds x="181" y="79" width="1318" height="221" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_004f1si_di" bpmnElement="Lane_004f1si" isHorizontal="true">
+        <dc:Bounds x="181" y="300" width="1318" height="270" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_1siqwbl_di" bpmnElement="Lane_1siqwbl" isHorizontal="true">
+        <dc:Bounds x="181" y="570" width="1318" height="160" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="223" y="162" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1howmif_di" bpmnElement="Activity_0z0efg0">
+        <dc:Bounds x="311" y="140" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0f449vk_di" bpmnElement="Task_CreateRefundRequest">
+        <dc:Bounds x="411" y="380" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0s8vltt_di" bpmnElement="Gateway_0s8vltt" isMarkerVisible="true">
+        <dc:Bounds x="586" y="395" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="646" y="406" width="52" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_12cr49b_di" bpmnElement="Activity_1674uuu">
+        <dc:Bounds x="810" y="440" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0cvc9zh_di" bpmnElement="Activity_1uibkj1">
+        <dc:Bounds x="810" y="140" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1ilizle_di" bpmnElement="Gateway_1x24asp">
+        <dc:Bounds x="995" y="455" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1qzud9l_di" bpmnElement="Activity_0ankag6">
+        <dc:Bounds x="980" y="620" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0rexg50_di" bpmnElement="Activity_1ldo3n3">
+        <dc:Bounds x="1110" y="340" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1ic4mkt_di" bpmnElement="Gateway_1smg0j9">
+        <dc:Bounds x="1255" y="455" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0ql36tz_di" bpmnElement="Event_0ql36tz">
+        <dc:Bounds x="1393" y="462" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0frc6lv_di" bpmnElement="Flow_0frc6lv">
+        <di:waypoint x="259" y="180" />
+        <di:waypoint x="311" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_18czzhl_di" bpmnElement="Flow_18czzhl">
+        <di:waypoint x="411" y="180" />
+        <di:waypoint x="461" y="180" />
+        <di:waypoint x="461" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ck3oht_di" bpmnElement="Flow_0ck3oht">
+        <di:waypoint x="859" y="220" />
+        <di:waypoint x="859" y="440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1bjdr8x_di" bpmnElement="Flow_1bjdr8x">
+        <di:waypoint x="511" y="420" />
+        <di:waypoint x="586" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0v1r8fe_di" bpmnElement="Flow_0v1r8fe">
+        <di:waypoint x="611" y="445" />
+        <di:waypoint x="611" y="480" />
+        <di:waypoint x="810" y="480" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="654" y="462" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1kx5wal_di" bpmnElement="Flow_1kx5wal">
+        <di:waypoint x="910" y="480" />
+        <di:waypoint x="995" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_03xr9il_di" bpmnElement="Flow_03xr9il">
+        <di:waypoint x="1020" y="455" />
+        <di:waypoint x="1020" y="380" />
+        <di:waypoint x="1110" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1yniwi9_di" bpmnElement="Flow_1yniwi9">
+        <di:waypoint x="1020" y="505" />
+        <di:waypoint x="1020" y="620" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1u9mxcd_di" bpmnElement="Flow_1u9mxcd">
+        <di:waypoint x="1080" y="660" />
+        <di:waypoint x="1280" y="660" />
+        <di:waypoint x="1280" y="505" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1kl641e_di" bpmnElement="Flow_1kl641e">
+        <di:waypoint x="1305" y="480" />
+        <di:waypoint x="1393" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0oxgo2r_di" bpmnElement="Flow_0oxgo2r">
+        <di:waypoint x="1210" y="380" />
+        <di:waypoint x="1280" y="380" />
+        <di:waypoint x="1280" y="455" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0se1guv_di" bpmnElement="Flow_0se1guv">
+        <di:waypoint x="611" y="395" />
+        <di:waypoint x="611" y="180" />
+        <di:waypoint x="810" y="180" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="617" y="269" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

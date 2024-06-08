@@ -1,4 +1,5 @@
 # Logs
+materijali/*
 logs
 *.log
 npm-debug.log*
